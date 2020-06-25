@@ -20,7 +20,7 @@ if not tf.test.gpu_device_name():
 else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
 
-def gen_test_output(sess, logits, keep_prob, image_pl, data_folder, image_shape):
+def gen_test_output(sess, logits, keep_prob, image_pl, screen, image_shape):
     """
     Generate test output using the test images
     :param sess: TF session
@@ -31,7 +31,7 @@ def gen_test_output(sess, logits, keep_prob, image_pl, data_folder, image_shape)
     :param image_shape: Tuple - Shape of image
     :return: Output for for each test image
     """
-    image = scipy.misc.imresize(scipy.misc.imread(data_folder), image_shape)
+    image = scipy.misc.imresize(screen, image_shape)
     im_softmax = sess.run([tf.nn.softmax(logits)],{keep_prob: 1.0, image_pl: [image]})
     im_softmax = im_softmax[0][:, 1].reshape(image_shape[0], image_shape[1])
     segmentation = (im_softmax > 0.5).reshape(image_shape[0], image_shape[1], 1)
