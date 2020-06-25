@@ -5,8 +5,7 @@ import scipy.misc
 import tensorflow as tf
 from distutils.version import LooseVersion
 from glob import glob
-import warnings  
-import matplotlib.pyplot as plt
+import warnings
 from moviepy.editor import VideoFileClip
 
 # Check TensorFlow Version
@@ -20,7 +19,7 @@ else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
 
 def predict_video(sess, image_shape, logits, keep_prob, input_image):
-    video_dir = r"./sample//"
+    video_dir = "./sample/"
     video_library =   [["GOPR0706_cut1.mp4", [210, 470]]]
     for video_data in video_library:
         rect = video_data[1]
@@ -31,7 +30,7 @@ def predict_video(sess, image_shape, logits, keep_prob, input_image):
 
 
 def predict_frame(im, rect, sess, image_shape, logits, keep_prob, image_pl):
-    original = im
+    original = im.copy()
     roi = im[rect[0]:rect[1],0:720]
 
     image = scipy.misc.imresize(roi, image_shape)
@@ -61,9 +60,6 @@ def run():
     with tf.Session() as sess:
         # Download pretrained vgg model
         # helper.maybe_download_pretrained_vgg(data_dir)
-
-        data_folder = './sample/um_000000.png' 
-
 
         saver = tf.train.import_meta_graph('./trained_model/Semantic_seg_trained.ckpt.meta')
         print("Graph imported...")
