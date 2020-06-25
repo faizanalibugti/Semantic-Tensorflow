@@ -81,7 +81,7 @@ def run():
                 print("fps: {}".format(1 / (time.time() - last_time)))
 
                 cv2.imshow('Screen Capture', screen)
-                #cv2.imshow('Semnatic Segmentation', image_output)
+                cv2.imshow('Semnatic Segmentation', image_output)
 
                 if cv2.waitKey(25) & 0xFF == ord("q"):
                     cv2.destroyAllWindows()
