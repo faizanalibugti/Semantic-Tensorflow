@@ -8,6 +8,7 @@ import cv2
 import scipy.misc
 import numpy as np
 import time
+import mss
 
 # Check TensorFlow Version
 assert LooseVersion(tf.__version__) >= LooseVersion('1.0'), 'Please use TensorFlow version 1.0 or newer.  You are using {}'.format(tf.__version__)
@@ -85,3 +86,6 @@ def run():
                 if cv2.waitKey(25) & 0xFF == ord("q"):
                     cv2.destroyAllWindows()
                     break
+
+if __name__ == '__main__':
+    run()
