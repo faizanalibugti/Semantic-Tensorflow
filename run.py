@@ -72,8 +72,8 @@ def run():
                 last_time = time.time()
 
                 # Get raw pixels from the screen, save it to a Numpy array
-                screen = numpy.array(sct.grab(monitor))
-                screen = numpy.flip(screen[:, :, :3], 2)
+                screen = np.array(sct.grab(monitor))
+                screen = np.flip(screen[:, :, :3], 2)
                 screen = cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)
 
                 image_output = gen_test_output(sess, logits, keep_prob, input_image, screen, image_shape)
