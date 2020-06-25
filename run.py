@@ -15,9 +15,32 @@ print('TensorFlow Version: {}'.format(tf.__version__))
 
 # Check for a GPU
 if not tf.test.gpu_device_name():
-    warnings.warn('No GPU found. Please use a GPU to train your neural network.')
+    warnings.warn('No GPU found. Please use a GPU to inference on your neural network.')
 else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
+
+def gen_test_output(sess, logits, keep_prob, image_pl, data_folder, image_shape):
+    """
+    Generate test output using the test images
+    :param sess: TF session
+    :param logits: TF Tensor for the logits
+    :param keep_prob: TF Placeholder for the dropout keep probability
+    :param image_pl: TF Placeholder for the image placeholder
+    :param data_folder: Path to the folder that contains the image
+    :param image_shape: Tuple - Shape of image
+    :return: Output for for each test image
+    """
+    image = scipy.misc.imresize(scipy.misc.imread(data_folder), image_shape)
+    im_softmax = sess.run([tf.nn.softmax(logits)],{keep_prob: 1.0, image_pl: [image]})
+    im_softmax = im_softmax[0][:, 1].reshape(image_shape[0], image_shape[1])
+    segmentation = (im_softmax > 0.5).reshape(image_shape[0], image_shape[1], 1)
+    mask = np.dot(segmentation, np.array([[0, 255, 0, 127]]))
+    mask = scipy.misc.toimage(mask, mode="RGBA")
+    street_im = scipy.misc.toimage(image)
+    street_im.paste(mask, box=None, mask=mask)
+    street_im = np.array(street_im)
+
+    return street_im
 
 def run():
     num_classes = 2
@@ -42,7 +65,7 @@ def run():
 
         with mss.mss() as sct:
             # Part of the screen to capture
-            monitor = {"top": 200, "left": 100, "width": 640, "height": 480}
+            monitor = {"top": 0, "left": 0, "width": 640, "height": 480}
 
             while "Screen capturing":
                 last_time = time.time()
@@ -52,6 +75,13 @@ def run():
                 screen = numpy.flip(screen[:, :, :3], 2)
                 screen = cv2.cvtColor(screen, cv2.COLOR_BGR2RGB)
 
-                
+                image_output = gen_test_output(sess, logits, keep_prob, input_image, screen, image_shape)
 
+                print("fps: {}".format(1 / (time.time() - last_time)))
 
+                cv2.imshow('Screen Capture', screen)
+                cv2.imshow('Semnatic Segmentation', image_output)
+
+                if cv2.waitKey(25) & 0xFF == ord("q"):
+                    cv2.destroyAllWindows()
+                    break

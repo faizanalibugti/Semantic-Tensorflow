@@ -27,9 +27,6 @@ For custom video, set
 * Screen capture:
 Use command **python run.py** to generate predictions on screen capture images
 
+Line 68 of run.py can be edited to capture screen of desired resolution
 
-
-
-
-
-
+monitor = {"top": 0, "left": 0, "width": 640, "height": 480}
